@@ -1,9 +1,11 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useState } from "react";
 
+
 function Login() {
+  const navigate = useNavigate();
   const {
     register,
     reset,
@@ -24,6 +26,7 @@ function Login() {
   const formSubmit = (data) => {
     console.log(data);
     reset();
+    navigate('/deshboard');
   };
 
   return (
