@@ -25,9 +25,21 @@ function TaskModal({ onClose, onAddTask }) {
     onClose();
   };
 
+  const handleCloseModel = (e) => {
+    console.log(e.target.id);
+    
+    if (e.target.id === 'container') {
+      onClose()
+      reset()
+    }
+  }
   return (
-    <div className="bg-black/70  w-full h-screen absolute top-0 right-0 flex justify-center items-center">
-      <div className=" bg-white w-100 h-105  rounded-lg p-5 ">
+    <div
+      onClick={(e) => handleCloseModel(e)}
+      id="container"
+      className="bg-black/70 w-full h-screen absolute top-0 right-0 flex justify-center items-center"
+    >
+      <div className=" bg-white w-100 h-105  rounded-lg p-5 border border-gray-500 ">
         <h1 className="text-xl  font-semibold text-center">Create Task</h1>
         <form onSubmit={handleSubmit(onHandleSubmit)}>
           <div className="relative">

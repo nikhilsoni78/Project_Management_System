@@ -28,8 +28,14 @@ function ProjectDetails() {
     setTasks(updatedTasks)
   }
 
+  const deleteTask = (taskId) => {
+    console.log('clicked',taskId);
+    const newTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(newTasks);
+  }
+
   return (
-    <div className="p-3 ">
+    <div className="p-3">
       <h2 className="text-2xl text-center font-semibold">Project Board</h2>
       <button
         className="border px-2 py-1 rounded-lg bg-gray-500 border-gray-700 hover:bg-gray-400 hover:border-gray-900 cursor-pointer"
@@ -48,6 +54,7 @@ function ProjectDetails() {
               key={task.id}
               task={task}
               onUpdateStatus={updateTaskStatus}
+              onDeleteTask={deleteTask}
             />
           ))}
         </div>
@@ -62,6 +69,7 @@ function ProjectDetails() {
               key={task.id}
               task={task}
               onUpdateStatus={updateTaskStatus}
+              onDeleteTask={deleteTask}
             />
           ))}
         </div>
@@ -77,6 +85,7 @@ function ProjectDetails() {
               key={task.id}
               task={task}
               onUpdateStatus={updateTaskStatus}
+              onDeleteTask={deleteTask}
             />
           ))}
         </div>

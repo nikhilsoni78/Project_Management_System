@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function NavBar() {
   return (
-    <div className="h-screen w-60 bg-gray-800 ">
+    <div className="h-screen  w-60 bg-gray-800 ">
       <div>
         <img className="ml-10 h-30 w-30" src="../public/logo.jpg" alt="Logo" />
       </div>
