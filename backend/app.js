@@ -7,9 +7,10 @@ const app = express();
 const connect = require('./src/config/db')
 const authRouter = require('./src/routes/authRoutes')
 const projectRouter = require('./src/routes/projectRoutes')
+const taskRouter = require('./src/routes/taskRoutes');
 const authentication = require('./src/middlewares/authentication')
 const cors = require('cors')
-const globalErrorHandler = require('./src/middlewares/GlobalErrorHandler')
+const globalErrorHandler = require('./src/middlewares/GlobalErrorHandler');
 
 
 //Middlewares
@@ -20,6 +21,7 @@ app.use(cors())
 //Routing Middlewares
 app.use('/api/v1', authRouter);
 app.use('/api/v1',authentication,projectRouter)
+app.use('/api/v1',authentication,taskRouter)
 
 //Global Error Middlware
 app.use(globalErrorHandler)
