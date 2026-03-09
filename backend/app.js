@@ -1,17 +1,28 @@
+require('dotenv').config()
 const express = require('express');
 const app = express();
 
 
+const connect = require('./src/config/db')
+
 app.use(express.json());
 
 
-app.get('/', (req,res) => {
-    res.send('Server on hai ')
-})
+const PORT = process.env.PORT || 3000
+const start = async () => {
+    try {
+        await connect(process.env.MONGO_URI);
+        app.listen(PORT, () => {
+            console.log(`Server is Running on Port: ${PORT}`);
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
-app.listen(3000, () => {
-    console.log('server is on');
-})
+start()
+
+
 
 
