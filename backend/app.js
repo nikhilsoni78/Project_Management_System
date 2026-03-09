@@ -8,10 +8,13 @@ const authRouter = require('./src/routes/authRoute')
 const connect = require('./src/config/db')
 const globalErrorHandler = require('./src/middlewares/GlobalErrorHandler')
 const authentication = require('./src/middlewares/authentication')
+const cors = require('cors')
 
 
 //Middlewares
 app.use(express.json());
+app.use(cors())
+
 
 //Routing Middlewares
 app.use('/api/v1', authRouter);
