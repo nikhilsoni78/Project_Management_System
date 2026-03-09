@@ -1,14 +1,23 @@
 require('dotenv').config()
 const express = require('express');
+//Express App
 const app = express();
 
-
+//Imports
+const authRouter = require('./src/routes/authRoute')
 const connect = require('./src/config/db')
 
+//Middlewares
 app.use(express.json());
+
+//Routing Middlewares
+app.use('/api/v1', authRouter);
+
 
 
 const PORT = process.env.PORT || 3000
+
+//main Function
 const start = async () => {
     try {
         await connect(process.env.MONGO_URI);
@@ -20,9 +29,4 @@ const start = async () => {
     }
 }
 
-
 start()
-
-
-
-
