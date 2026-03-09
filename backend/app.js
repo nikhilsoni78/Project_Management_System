@@ -6,6 +6,7 @@ const app = express();
 //Imports
 const authRouter = require('./src/routes/authRoute')
 const connect = require('./src/config/db')
+const globalErrorHandler = require('./src/middlewares/GlobalErrorHandler')
 
 //Middlewares
 app.use(express.json());
@@ -13,7 +14,8 @@ app.use(express.json());
 //Routing Middlewares
 app.use('/api/v1', authRouter);
 
-
+//Global Error Middlware
+app.use(globalErrorHandler)
 
 const PORT = process.env.PORT || 3000
 
