@@ -1,16 +1,60 @@
 const UserModel = require('../models/User')
-const {  } = require('../Errors')
+const { StatusCodes } = require('http-status-codes')
+const { BadrequestError, UnauthorizedError } = require('../Errors')
 
-const register = (req, res) => {
-    
-    res.json({message: 'register'})
+const register = async(req, res) => {
+    const { name, email, password } = req.body
+    if (!name || !email || !password) {
+        throw new BadrequestError("Name Email and Password are Required")
+    }
+    const user = await UserModel.findOne({ email });
+    if (user) {
+        throw new BadrequestError(`User Already Exist with Email: ${email}`)
+    }
+    const createdUser = await UserModel.create({ name, email, password });
+    res.status(StatusCodes.CREATED).json({success: true, message: "User Created Successfully", data: createdUser})
 }
-const login = (req, res) => {
-    res.json({message: 'login'})
+
+const login = async(req, res) => {
+    const { email, password } = req.body
+    if (!email || !password) {
+        throw new BadrequestError("Email And Password is Required")
+    }
+    const existingUser = await UserModel.findOne({ email }).select('+password');
+
+    if (!existingUser) {
+        throw new UnauthorizedError(`User with Email ${email} does not exits`)
+    }
+
+    const matched = await existingUser.matchPassword(password)
+
+    if (!matched) {
+        throw new UnauthorizedError('Wrong Credentials Please Try Again')
+    }
+
+    const accessToken = existingUser.generateToken();
+
+    res.status(StatusCodes.OK).json({
+        success: true,
+        message: 'Login Successfully',
+        data: {
+            id: existingUser._id,
+            name: existingUser.name,
+            email: existingUser.email
+        },
+        accessToken: accessToken
+    })
 }
-const userProfile = (req, res) => {
-    res.json({message: 'userProfile'})
+
+const userProfile = async (req, res) => {
+    const { userId } = req.user
+    const user = await UserModel.findOne({ _id: userId });
+    if (!user) {
+        throw new UnauthorizedError("No User Exist Login First")
+    }
+    res.json({success:true, data: user})
 }
+
 const logout = (req, res) => {
     res.json({message: 'logout'})
 }

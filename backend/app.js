@@ -7,6 +7,8 @@ const app = express();
 const authRouter = require('./src/routes/authRoute')
 const connect = require('./src/config/db')
 const globalErrorHandler = require('./src/middlewares/GlobalErrorHandler')
+const authentication = require('./src/middlewares/authentication')
+
 
 //Middlewares
 app.use(express.json());
