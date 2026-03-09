@@ -1,10 +1,9 @@
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useState } from "react";
 import axios from "../api/axios";
-import {toast} from 'react-toastify'
-
+import { toast } from "react-toastify";
 
 function Login() {
   const navigate = useNavigate();
@@ -19,34 +18,33 @@ function Login() {
       email: "",
       password: "",
     },
+
   });
   const [eyeHide, setEyeHide] = useState(false);
   const [loading, setLoading] = useState(false);
-
 
   const handleOnEyeClick = () => {
     setEyeHide((curValue) => !curValue);
   };
 
-  const formSubmit = async(data) => {
+  const formSubmit = async (data) => {
     try {
-      setLoading(true)
+      setLoading(true);
       const { email, password } = data;
-      console.log(data);
-      
       const response = await axios.post("/auth/login", { email, password });
+
       if (response.status === 200) {
-        localStorage.setItem("accessToken",response.data.accessToken);
+        localStorage.setItem("accessToken", response.data.accessToken);
         console.log(response);
-        toast.success(response.data.message)
-        navigate('/deshboard');
+        toast.success(response.data.message);
+        navigate("/deshboard");
       }
       reset();
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrong";
-      toast.error(message)
+      toast.error(message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -101,7 +99,10 @@ function Login() {
           </span>
         )}
 
-        <button className="border cursor-pointer w-full p-1 rounded-lg bg-gray-600 hover:bg-gray-500 font-medium text-lg" disabled={loading}>
+        <button
+          className="border cursor-pointer w-full p-1 rounded-lg bg-gray-600 hover:bg-gray-500 font-medium text-lg"
+          disabled={loading}
+        >
           {loading ? "Loginingg..." : "Login"}
         </button>
         <div className="flex gap-1 mt-5">

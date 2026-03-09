@@ -4,11 +4,12 @@ const express = require('express');
 const app = express();
 
 //Imports
-const authRouter = require('./src/routes/authRoute')
 const connect = require('./src/config/db')
-const globalErrorHandler = require('./src/middlewares/GlobalErrorHandler')
+const authRouter = require('./src/routes/authRoutes')
+const projectRouter = require('./src/routes/projectRoutes')
 const authentication = require('./src/middlewares/authentication')
 const cors = require('cors')
+const globalErrorHandler = require('./src/middlewares/GlobalErrorHandler')
 
 
 //Middlewares
@@ -18,6 +19,7 @@ app.use(cors())
 
 //Routing Middlewares
 app.use('/api/v1', authRouter);
+app.use('/api/v1',authentication,projectRouter)
 
 //Global Error Middlware
 app.use(globalErrorHandler)
