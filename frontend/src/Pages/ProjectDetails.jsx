@@ -5,7 +5,6 @@ import TaskModal from "../Components/TaskModel.jsx";
 import {
   getTasksByProject,
   createTask,
-  updatePriority,
   updateStatus,
   deleteTask,
 } from "../services/taskService.js";
@@ -25,9 +24,9 @@ function ProjectDetails() {
     }
   };
 
-  useEffect(() => {
-    getProject();
-  }, []);
+    useEffect(() => {
+      getProject();
+    }, []);    
 
   const [isModelOpen, setModelOpen] = useState(false);
 
@@ -42,40 +41,40 @@ function ProjectDetails() {
       toast.success(response.message);
       setTasks([response.data, ...tasks]);
     } catch (error) {
-       toast(error.response?.data?.message);
-       console.error(error.response?.data?.message);
-       console.error(error);
+      toast(error.response?.data?.message);
+      console.error(error.response?.data?.message);
+      console.error(error);
     } finally {
       setModelOpen(false);
     }
   };
 
   const updateTaskStatus = async (newStatus, taskId) => {
-   try {
-     const response = await updateStatus(newStatus, taskId);
-     toast.success(response.message);
-     setTasks((prevTasks) =>
-       prevTasks.map((task) => 
-         task._id === taskId ? {...task, status: newStatus} : task
-       ))
-   } catch (error) {
-     toast(error.response?.data?.message)
-     console.error(error.response?.data?.message);
-     console.error(error)
-   }
+    try {
+      const response = await updateStatus(newStatus, taskId);
+      toast.success(response.message);
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task._id === taskId ? { ...task, status: newStatus } : task,
+        ),
+      );
+    } catch (error) {
+      toast(error.response?.data?.message);
+      console.error(error.response?.data?.message);
+      console.error(error);
+    }
   };
 
   const onDeleteTask = async (taskId) => {
-   try {
-     const response = await deleteTask(taskId);
-     toast.success(response.message)
-     setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId))
-   } catch (error) {
-     toast.error(error.response.data.message)
-     console.error(error.response.data.message);
-     console.error(error);
-     
-   }
+    try {
+      const response = await deleteTask(taskId);
+      toast.success(response.message);
+      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+    } catch (error) {
+      toast.error(error.response.data.message);
+      console.error(error.response.data.message);
+      console.error(error);
+    }
   };
 
   return (

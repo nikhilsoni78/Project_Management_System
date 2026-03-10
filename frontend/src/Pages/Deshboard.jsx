@@ -1,25 +1,40 @@
 import { useEffect, useState } from "react";
 import ProjectCard from "../Components/ProjectCard";
-import { data } from "../mock";
 import CreateProjectModel from "../Components/CreateProjectModel";
-import { projects } from "../services/projectService";
+import { projects,createProject } from "../services/projectService";
+import { toast } from 'react-toastify'
+
 
 function Deshboard() {
   const [project, setProject] = useState([]);
   const [modelOpen, setModelOpen] = useState(false);
 
   const getProjects = async() => {
-    const response = await projects();
-    setProject(response.data)
+  try {
+      const response = await projects();
+      setProject(response.data)
+  } catch (error) {
+    console.log(error);
+    
+  }
 }
   useEffect(() => {
     getProjects()
   },[])
 
-  const handleAddProject = (newProject) => {
-    console.log("Add project clicked");
-    const newProjects = [newProject, ...project];
-    setProject(newProjects);
+  const handleAddProject = async(newProject) => {
+    console.log(newProject);
+    const {name, description} = newProject
+    try {
+      const response = await createProject({name,description})
+      console.log(response);
+      toast.success(response.message)
+      setProject([response.data, ...project])
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message)
+      console.log(error.response?.data?.message);
+    }
     setModelOpen(false);
   };
   

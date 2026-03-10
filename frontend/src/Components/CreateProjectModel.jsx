@@ -9,20 +9,13 @@ const CreateProjectModel = ({ onClose, addProject }) => {
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      title: "",
-      Description: "",
+      name: "",
+      description: "",
     },
   });
 
     const onHandleSubmit = (data) => {     
-        const newProject = {
-            id: Date.now().toString(),
-            ...data,
-            tasks: []
-        }
-        console.log(newProject);
-        
-      addProject(newProject)
+      addProject(data);
       reset()
       onClose()
   };
@@ -49,7 +42,7 @@ const CreateProjectModel = ({ onClose, addProject }) => {
                   className="border rounded-lg w-full p-1"
                   type="text"
                   id="title"
-                  {...register("title", { required: "Title is required" })}
+                  {...register("name", { required: "Title is required" })}
                 />
               </label>
               {errors.title && (
@@ -65,8 +58,8 @@ const CreateProjectModel = ({ onClose, addProject }) => {
                 <input
                   className="border rounded-lg w-full p-1"
                   type="text"
-                  id="Description"
-                  {...register("Description", {
+                  id="description"
+                  {...register("description", {
                     required: "Description is required",
                   })}
                 />

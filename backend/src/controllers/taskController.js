@@ -61,7 +61,6 @@ const getByProject = async (req, res) => {
     res.status(StatusCodes.OK).json({ success: true, data: tasks})
 }
 
-
 const updateStatus = async (req, res) => {
     const { status } = req.body
     const {taskId} = req.params
