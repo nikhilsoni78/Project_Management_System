@@ -10,9 +10,13 @@ const authenticationMiddleware = (req, res, next) => {
 
     const token = authHeader.split(' ')[1];
     
-    const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_TOKEN)
-    
-    req.user = { userId: decodedToken.userId, email: decodedToken.email }
+    try {
+        const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_TOKEN)
+        
+        req.user = { userId: decodedToken.userId, email: decodedToken.email }   
+    } catch (error) {
+        throw new UnauthorizedError("Invalid Token")
+    }
     
     next()
 

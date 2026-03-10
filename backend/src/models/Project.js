@@ -12,7 +12,8 @@ const ProjectSchema = new mongoose.Schema({
         required: [true,"Description is Required"]
     },
     createdBy: {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Users",
         required:[true, "User is Required"]
     }
 }, { timestamps: true })
