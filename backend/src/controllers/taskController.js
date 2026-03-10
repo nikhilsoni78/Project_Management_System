@@ -5,14 +5,14 @@ const { StatusCodes } = require('http-status-codes')
 
 const createTask = async (req, res) => {
     const {
-        body: { title, dueDate },
+        body: { title, dueDate,priority },
         params: {projectId},
         user: {userId}
     } = req;
     console.log(projectId);
     
-    if (!title || !dueDate) {
-        throw new BadrequestError("Title and Duedate Id is Required")
+    if (!title || !dueDate || ! priority) {
+        throw new BadrequestError("Title, priority and Duedate is Required")
     }
   
     if (!projectId) {
@@ -35,6 +35,7 @@ const createTask = async (req, res) => {
             title,
             dueDate,
             projectId,
+            priority,
             assignedTo: userId
         });
     res.status(StatusCodes.CREATED).json({success: true, message: "Task Created Successfully", data: savedTask})
@@ -51,7 +52,7 @@ const getByProject = async (req, res) => {
     const tasks = await TaskModel.find({
     projectId,
     assignedTo: req.user.userId
-  });
+  }).populate("assignedTo","name email");
 
   if (!tasks.length) {
     throw new NotFoundError("No tasks found");

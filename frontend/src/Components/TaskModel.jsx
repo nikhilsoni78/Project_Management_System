@@ -11,23 +11,17 @@ function TaskModal({ onClose, onAddTask }) {
     mode: "onChange",
     defaultValues: {
       title: "",
-      assignedTo: "",
       dueDate: "",
-      status: "todo",
       priority: "",
     },
   });
   const onHandleSubmit = (data) => {
-    const task = { ...data, id: Date.now().toString() };
-    console.log(data);
-    onAddTask(task);
+    onAddTask(data);
     reset();
     onClose();
   };
 
   const handleCloseModel = (e) => {
-    console.log(e.target.id);
-    
     if (e.target.id === 'container') {
       onClose()
       reset()
@@ -55,25 +49,6 @@ function TaskModal({ onClose, onAddTask }) {
             {errors.title && (
               <span className="text-red-600 absolute left-3 top-8 text-lg">
                 {errors.title.message}
-              </span>
-            )}
-          </div>
-
-          <div className="relative">
-            <label htmlFor="assignTo" className="text-lg font-semibold">
-              AssignedTo
-              <input
-                className="border rounded-lg w-full p-1"
-                type="text"
-                id="assignTo"
-                {...register("assignedTo", {
-                  required: "assignedTo is required",
-                })}
-              />
-            </label>
-            {errors.assignedTo && (
-              <span className="text-red-600 absolute left-3 top-8 text-lg">
-                {errors.assignedTo.message}
               </span>
             )}
           </div>

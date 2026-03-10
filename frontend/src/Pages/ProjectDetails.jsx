@@ -1,38 +1,82 @@
-import React, { useState } from "react";
-import TaskCard from "../Components/TaskCard";
-import { data } from "../mock";
+import React, { useEffect, useState } from "react";
+import TaskCard from "../Components/TaskCard.jsx";
 import { useParams } from "react-router-dom";
-import TaskModal from "../Components/TaskModel";
+import TaskModal from "../Components/TaskModel.jsx";
+import {
+  getTasksByProject,
+  createTask,
+  updatePriority,
+  updateStatus,
+  deleteTask,
+} from "../services/taskService.js";
+import { toast } from "react-toastify";
 
 function ProjectDetails() {
   const { id } = useParams();
-  const project = data.find((project) => project.id === Number(id));
 
-  if (!project) {
-    return <div> Projects not found</div>;
-  }
-  const [tasks, setTasks] = useState(project.tasks);
+  const [tasks, setTasks] = useState([]);
+
+  const getProject = async () => {
+    try {
+      const response = await getTasksByProject(id);
+      setTasks(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProject();
+  }, []);
+
   const [isModelOpen, setModelOpen] = useState(false);
 
   const toDoTasks = tasks.filter((task) => task.status === "todo");
   const inPrograssTasks = tasks.filter((task) => task.status === "inprogress");
   const doneTasks = tasks.filter((task) => task.status === "done");
 
-  const addTask = (newTask) => {
-    setTasks([...tasks, newTask])
-    setModelOpen(false);
+  const addTask = async (newTask) => {
+    const { title, dueDate, priority } = newTask;
+    try {
+      const response = await createTask({ title, dueDate, priority }, id);
+      toast.success(response.message);
+      setTasks([response.data, ...tasks]);
+    } catch (error) {
+       toast(error.response?.data?.message);
+       console.error(error.response?.data?.message);
+       console.error(error);
+    } finally {
+      setModelOpen(false);
+    }
   };
 
-  const updateTaskStatus = (newStatus, id) => {
-    const updatedTasks  = tasks.map((task) => task.id === id ? { ...task ,status:newStatus} :task)
-    setTasks(updatedTasks)
-  }
+  const updateTaskStatus = async (newStatus, taskId) => {
+   try {
+     const response = await updateStatus(newStatus, taskId);
+     toast.success(response.message);
+     setTasks((prevTasks) =>
+       prevTasks.map((task) => 
+         task._id === taskId ? {...task, status: newStatus} : task
+       ))
+   } catch (error) {
+     toast(error.response?.data?.message)
+     console.error(error.response?.data?.message);
+     console.error(error)
+   }
+  };
 
-  const deleteTask = (taskId) => {
-    console.log('clicked',taskId);
-    const newTasks = tasks.filter((task) => task.id !== taskId);
-    setTasks(newTasks);
-  }
+  const onDeleteTask = async (taskId) => {
+   try {
+     const response = await deleteTask(taskId);
+     toast.success(response.message)
+     setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId))
+   } catch (error) {
+     toast.error(error.response.data.message)
+     console.error(error.response.data.message);
+     console.error(error);
+     
+   }
+  };
 
   return (
     <div className="p-3">
@@ -51,10 +95,10 @@ function ProjectDetails() {
           </h3>
           {toDoTasks.map((task) => (
             <TaskCard
-              key={task.id}
+              key={task._id}
               task={task}
               onUpdateStatus={updateTaskStatus}
-              onDeleteTask={deleteTask}
+              onDeleteTask={onDeleteTask}
             />
           ))}
         </div>
@@ -66,10 +110,10 @@ function ProjectDetails() {
           </h3>
           {inPrograssTasks.map((task) => (
             <TaskCard
-              key={task.id}
+              key={task._id}
               task={task}
               onUpdateStatus={updateTaskStatus}
-              onDeleteTask={deleteTask}
+              onDeleteTask={onDeleteTask}
             />
           ))}
         </div>
@@ -82,16 +126,21 @@ function ProjectDetails() {
           </h3>
           {doneTasks.map((task) => (
             <TaskCard
-              key={task.id}
+              key={task._id}
               task={task}
               onUpdateStatus={updateTaskStatus}
-              onDeleteTask={deleteTask}
+              onDeleteTask={onDeleteTask}
             />
           ))}
         </div>
       </div>
       {isModelOpen && (
         <TaskModal onClose={() => setModelOpen(false)} onAddTask={addTask} />
+      )}
+      {tasks.length === 0 && (
+        <p className="text-center font-semibold text-gray-500 mt-4">
+          No tasks yet. Create your first task.
+        </p>
       )}
     </div>
   );
