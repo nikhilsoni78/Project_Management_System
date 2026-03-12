@@ -1,4 +1,5 @@
 const ProjectModel = require('../models/Project')
+const UserModel = require('../models/User')
 const { BadrequestError, NotFoundError } = require('../Errors')
 const { StatusCodes } = require('http-status-codes')
 
@@ -47,9 +48,39 @@ const deleteProject = async (req, res) => {
     res.status(StatusCodes.OK).json({success: true, message: "Project Deleted SuccssFully"})
 }
 
+const addMembers = async (req, res) => {
+    const { projectId } = req.params
+    const { userId } = req.body
+    if (!userId) {
+        throw new BadrequestError("No Member Id Found")
+    }
+
+    const updatedProject = await ProjectModel.findOneAndUpdate(
+        { projectId, createdBy: req.user.userId },
+        { $addToSet: { members: userId } },
+        { new: true, runValidators: true }).populate("members", "name email")
+    
+    const user = await UserModel.findOne({ _id: userId })
+    
+    if (!user) {
+        throw new NotFoundError("No User Found")
+    }
+
+    if (!updatedProject) {
+        throw new NotFoundError(`No Project found with id ${projectId}`)
+    }
+    res.status(StatusCodes.OK).
+        json({
+                success: true,
+                message: `${user.name} added Successfully`,
+                data: updatedProject
+            })
+}
+
 module.exports = {
     createProject,
     getAllProjects,
     getProject,
-    deleteProject
+    deleteProject,
+    addMembers
 }

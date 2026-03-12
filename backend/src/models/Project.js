@@ -15,6 +15,11 @@ const ProjectSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Users",
         required:[true, "User is Required"]
+    },
+    members: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Users",
+        required:[true]
     }
 }, { timestamps: true })
 
