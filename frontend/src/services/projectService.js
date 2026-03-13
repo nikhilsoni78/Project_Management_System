@@ -21,9 +21,15 @@ const getProjectById = async (id) => {
   return response.data;
 };
 
+const addMembers = async (userId,projectId) => {
+    const response = await api.patch(`projects/${projectId}/members`,{userId})
+    return response.data;
+}
+
 export {
     createProject,
     projects,
     getProjectById,
-    deleteProject
+    deleteProject,
+    addMembers
 }

@@ -49,16 +49,21 @@ const getByProject = async (req, res) => {
         throw new BadrequestError("ProjectId is required")
     }
 
+    const project = await ProjectModel.findOne({ _id: projectId, createdBy: req.user.userId }).populate("members")
+    if (!project) {
+        throw new BadrequestError("Project not found")
+    }
+
     const tasks = await TaskModel.find({
     projectId,
     assignedTo: req.user.userId
   }).populate("assignedTo","name email");
 
-  if (!tasks.length) {
+  if (tasks.length === 0) {
     throw new NotFoundError("No tasks found");
   }
 
-    res.status(StatusCodes.OK).json({ success: true, data: tasks})
+    res.status(StatusCodes.OK).json({ success: true, members: project.members , data: tasks})
 }
 
 const updateStatus = async (req, res) => {

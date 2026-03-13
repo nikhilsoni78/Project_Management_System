@@ -1,10 +1,15 @@
 
 import { MdDelete } from "react-icons/md";
-function TaskCard({ task, onUpdateStatus, onDeleteTask }) {
+function TaskCard({
+  task,
+  onUpdateStatus,
+  onDeleteTask,
+  members,
+}) {
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString();
   };
-  
+
   return (
     <div className="border relative p-2 w-60">
       <button
@@ -14,7 +19,7 @@ function TaskCard({ task, onUpdateStatus, onDeleteTask }) {
         <MdDelete />
       </button>
       <h1 className="text-xl text-gray-800  font-semibold">{task.title}</h1>
-      <p className="font-medium">AssignedTo: {task.assignedTo?.name}</p>
+      <p className="font-medium">AssignedTo: {members.map((member) => member.name) + ' '}</p>
       <p className="font-medium">Due Date: {formatDate(task.dueDate)}</p>
       <p className="font-medium">Priority: {task.priority}</p>
       <label className="font-medium" htmlFor="update">

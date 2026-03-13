@@ -9,30 +9,51 @@ import {
   deleteTask,
 } from "../services/taskService.js";
 import { toast } from "react-toastify";
+import AddMemberModel from "../Components/AddMemberModel.jsx";
+import { addMembers } from "../services/projectService.js";
 
 function ProjectDetails() {
   const { id } = useParams();
 
   const [tasks, setTasks] = useState([]);
+  const [members, setMembers] = useState([]);
 
   const getProject = async () => {
     try {
       const response = await getTasksByProject(id);
+      console.log(response);
+
       setTasks(response.data);
+      setMembers(response.members);
     } catch (error) {
       console.log(error);
     }
   };
 
-    useEffect(() => {
-      getProject();
-    }, []);    
+  useEffect(() => {
+    getProject();
+  }, []);
 
   const [isModelOpen, setModelOpen] = useState(false);
+  const [isMemberModelOpen, setMembermodelOpen] = useState(false);
 
   const toDoTasks = tasks.filter((task) => task.status === "todo");
   const inPrograssTasks = tasks.filter((task) => task.status === "inprogress");
   const doneTasks = tasks.filter((task) => task.status === "done");
+
+  const addMembersApi = async (userId) => {
+    try {
+      const response = await addMembers(userId, id);
+      console.log(response.data);
+      toast.success(response.message);
+    } catch (error) {
+      toast.error(error.response?.data?.message);
+      console.error(error.response?.data?.message);
+      console.error(error);
+    } finally {
+      setMembermodelOpen(false)
+    }
+  };
 
   const addTask = async (newTask) => {
     const { title, dueDate, priority } = newTask;
@@ -86,6 +107,12 @@ function ProjectDetails() {
       >
         Add Task
       </button>
+      <button
+        className="border px-2 ml-2 py-1 rounded-lg bg-gray-500 border-gray-700 hover:bg-gray-400 hover:border-gray-900 cursor-pointer"
+        onClick={() => setMembermodelOpen(true)}
+      >
+        Add Members
+      </button>
 
       <div className="flex gap-5">
         <div className="flex-1 flex flex-col gap-1 ">
@@ -96,6 +123,7 @@ function ProjectDetails() {
             <TaskCard
               key={task._id}
               task={task}
+              members={members}
               onUpdateStatus={updateTaskStatus}
               onDeleteTask={onDeleteTask}
             />
@@ -111,6 +139,7 @@ function ProjectDetails() {
             <TaskCard
               key={task._id}
               task={task}
+              members={members}
               onUpdateStatus={updateTaskStatus}
               onDeleteTask={onDeleteTask}
             />
@@ -127,15 +156,25 @@ function ProjectDetails() {
             <TaskCard
               key={task._id}
               task={task}
+              members={members}
               onUpdateStatus={updateTaskStatus}
               onDeleteTask={onDeleteTask}
             />
           ))}
         </div>
       </div>
+
       {isModelOpen && (
         <TaskModal onClose={() => setModelOpen(false)} onAddTask={addTask} />
       )}
+
+      {isMemberModelOpen && (
+        <AddMemberModel
+          addMembersApi={addMembersApi}
+          onClose={() => setMembermodelOpen(false)}
+        />
+      )}
+
       {tasks.length === 0 && (
         <p className="text-center font-semibold text-gray-500 mt-4">
           No tasks yet. Create your first task.

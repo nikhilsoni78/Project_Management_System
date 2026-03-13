@@ -1,5 +1,6 @@
-import { useState } from "react";
+
 import { useForm } from "react-hook-form";
+
 
 function TaskModal({ onClose, onAddTask }) {
   const {
@@ -15,6 +16,8 @@ function TaskModal({ onClose, onAddTask }) {
       priority: "",
     },
   });
+
+
   const onHandleSubmit = (data) => {
     onAddTask(data);
     reset();

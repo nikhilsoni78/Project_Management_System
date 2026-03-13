@@ -1,6 +1,6 @@
 const UserModel = require('../models/User')
 const { StatusCodes } = require('http-status-codes')
-const { BadrequestError, UnauthorizedError } = require('../Errors')
+const { BadrequestError, UnauthorizedError, NotFoundError } = require('../Errors')
 
 const register = async(req, res) => {
     const { name, email, password } = req.body
@@ -55,10 +55,18 @@ const userProfile = async (req, res) => {
     res.json({success:true, data: user})
 }
 
+const getAllUsers = async (req, res) => {
+    const users = await UserModel.find({});
+    if (users.length === 0) {
+        throw new NotFoundError("No Users Found")
+    }
+    res.status(StatusCodes.OK).json({success: true, count: users.length, data: users})
+}
+
 const logout = (req, res) => {
     res.json({message: 'logout'})
 }
 
 module.exports = {
-    login,logout,register,userProfile
+    login,logout,register,userProfile,getAllUsers
 }
